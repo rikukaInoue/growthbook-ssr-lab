@@ -16,7 +16,11 @@ SSR のポイント:
 
 ## セットアップ
 
-### 1. GrowthBook を起動
+### 1. GrowthBook を用意(Cloud または セルフホスト)
+
+**Cloud(推奨・手軽)**: https://app.growthbook.io でアカウント作成(スタータープランは無料)。docker compose は不要。
+
+**セルフホスト**: ローカルで完結させたい場合はこちら。
 
 ```shell
 docker compose up -d
@@ -32,7 +36,9 @@ http://localhost:3000 を開き、初回の管理者アカウントを作成す�
 ```shell
 cd app
 cp .env.example .env
-# .env の GB_CLIENT_KEY に貼り付ける
+# .env の GB_CLIENT_KEY に Client Key を貼り付ける
+# GB_API_HOST は Cloud なら https://cdn.growthbook.io(.env.example のデフォルト)、
+# セルフホストなら http://localhost:3100 にする
 ```
 
 ### 3. feature を作る
