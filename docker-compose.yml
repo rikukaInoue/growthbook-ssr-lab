@@ -1,0 +1,31 @@
+name: growthbook-ssr-lab
+
+services:
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
+
+  growthbook:
+    image: growthbook/growthbook:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3100:3100"
+    depends_on:
+      - mongo
+    environment:
+      MONGODB_URI: mongodb://root:password@mongo:27017/growthbook?authSource=admin
+      APP_ORIGIN: http://localhost:3000
+      API_HOST: http://localhost:3100
+      # ローカル検証用の固定シークレット(本番運用では必ず変更する)
+      JWT_SECRET: local-dev-jwt-secret
+      ENCRYPTION_KEY: local-dev-encryption-key
+    volumes:
+      - gb_uploads:/usr/local/src/app/packages/back-end/uploads
+
+volumes:
+  mongo_data:
+  gb_uploads:
