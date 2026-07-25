@@ -39,6 +39,21 @@ export default function Home() {
         >
           <strong>demo-banner: ON</strong>
           <p>{bannerText}</p>
+          <button
+            id="demo-cta"
+            style={{ padding: "0.5rem 1.5rem", cursor: "pointer" }}
+            onClick={() => {
+              console.log("[demo] cta click");
+              // 実験のメトリクス用イベント(GrowthBook 側でこのイベント数を A/B 比較する)
+              if (typeof window.gtag === "function") {
+                window.gtag("event", "demo_cta_click", {
+                  gb_anon_id: String(rootData?.attributes.id ?? ""),
+                });
+              }
+            }}
+          >
+            詳細を見る
+          </button>
         </div>
       ) : (
         <div
