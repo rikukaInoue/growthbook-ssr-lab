@@ -18,7 +18,13 @@ const browser = await chromium.launch({
   channel: "chrome-canary",
   headless: false,
 });
-const counts = { A: 0, B: 0, unknown: 0, clicks: { A: 0, B: 0 } };
+const counts = {
+  A: 0,
+  B: 0,
+  unknown: 0,
+  clicks: { A: 0, B: 0 },
+  cta: { blue: 0, red: 0 },
+};
 
 for (let i = 0; i < N; i++) {
   const ctx = await browser.newContext();
@@ -33,8 +39,15 @@ for (let i = 0; i < N; i++) {
         : "unknown";
     counts[variant]++;
 
+    // CTAスタイル実験(demo-cta-style)のバリアント判定。
+    // 「今すぐチェック」(赤)の方がクリック率が高い、という差を仕込む
+    const ctaLabel =
+      (await page.textContent("#demo-cta").catch(() => "")) ?? "";
+    const ctaBoost = ctaLabel.includes("今すぐチェック") ? 0.15 : 0;
+    counts.cta[ctaLabel.includes("今すぐチェック") ? "red" : "blue"]++;
+
     let clicked = false;
-    if (variant !== "unknown" && Math.random() < CLICK_PROB[variant]) {
+    if (variant !== "unknown" && Math.random() < CLICK_PROB[variant] + ctaBoost) {
       await page.click("#demo-cta", { timeout: 3000 }).catch(() => {});
       counts.clicks[variant]++;
       clicked = true;

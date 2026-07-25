@@ -13,6 +13,13 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// JSON型フラグの中身。デザイン設定をまとめてA/Bテストする
+// (useFeatureValue の型制約上、interface ではなく type で定義する)
+type CtaStyle = {
+  color: string;
+  label: string;
+};
+
 export default function Home() {
   const rootData = useRouteLoaderData<typeof rootLoader>("root");
 
@@ -23,6 +30,10 @@ export default function Home() {
     "demo-banner-text",
     "(fallback) demo-banner-text 未設定です",
   );
+  const ctaStyle = useFeatureValue<CtaStyle>("demo-cta-style", {
+    color: "#0284c7",
+    label: "詳細を見る",
+  });
 
   return (
     <main style={{ fontFamily: "sans-serif", maxWidth: 640, margin: "4rem auto" }}>
@@ -41,7 +52,14 @@ export default function Home() {
           <p>{bannerText}</p>
           <button
             id="demo-cta"
-            style={{ padding: "0.5rem 1.5rem", cursor: "pointer" }}
+            style={{
+              padding: "0.5rem 1.5rem",
+              cursor: "pointer",
+              background: ctaStyle.color,
+              color: "#fff",
+              border: "none",
+              borderRadius: 6,
+            }}
             onClick={() => {
               console.log("[demo] cta click");
               // 実験のメトリクス用イベント(GrowthBook 側でこのイベント数を A/B 比較する)
@@ -52,7 +70,7 @@ export default function Home() {
               }
             }}
           >
-            詳細を見る
+            {ctaStyle.label}
           </button>
         </div>
       ) : (
