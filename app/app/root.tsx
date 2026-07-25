@@ -45,12 +45,27 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// GA4 測定ID(公開情報なのでハードコードでOK)
+const GA_MEASUREMENT_ID = "G-31LQ6H78ND";
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`,
+          }}
+        />
         <Meta />
         <Links />
       </head>
@@ -72,10 +87,19 @@ export default function App() {
     const instance = new GrowthBook({
       attributes,
       trackingCallback: (experiment, result) => {
-        // 実験の露出イベント。実運用ではここから GA4 等の計測基盤へ送る
         console.log(
           `[growthbook] exposure: ${experiment.key} -> variation ${result.key}`,
         );
+        // GA4 への露出イベント送信(ブラウザのみ。サーバー側の評価はログのみ)。
+        // gtag は head のインラインスクリプトで定義済みなので、ライブラリの
+        // ロード前でも dataLayer にキューされて取りこぼしがない
+        if (typeof window !== "undefined" && typeof window.gtag === "function") {
+          window.gtag("event", "experiment_viewed", {
+            experiment_id: experiment.key,
+            variation_id: result.key,
+            gb_anon_id: String(attributes.id),
+          });
+        }
       },
     });
     if (payload !== null) {

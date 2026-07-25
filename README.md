@@ -69,8 +69,16 @@ http://localhost:5173 で確認。実験の露出ログはブラウザ/サーバ
 - cookie `gb_anon_id` を消すと再抽選される
 - GrowthBook 側で feature を変更すると、キャッシュTTL(30秒)経過後に反映される
 
+## 計測(GA4)
+
+`trackingCallback` からブラウザ側で GA4 に `experiment_viewed` イベントを送信する
+(パラメータ: `experiment_id`, `variation_id`, `gb_anon_id`)。gtag スニペットは
+`root.tsx` の Layout に埋め込み済み(測定ID: G-31LQ6H78ND)。
+
+- 受信確認: GA4 管理画面の **Realtime** または **DebugView**(`?gtm_debug=x` を付けてアクセス)
+- サーバー側評価の露出はコンソールログのみ(二重計上防止。ブラウザでのハイドレーション時に必ず同じ評価が走るため、送信はブラウザ側に寄せている)
+
 ## 次のステップ(未実装)
 
-- `trackingCallback` から実際の計測基盤(GA4 / BigQuery 等)への送信
-- GrowthBook にデータソースとメトリクスを設定して実験結果を可視化
+- GrowthBook にデータソース(GA4 は BigQuery export 経由)とメトリクスを設定して実験結果を可視化
 - Sticky bucketing / Streaming(SSE)での即時反映
