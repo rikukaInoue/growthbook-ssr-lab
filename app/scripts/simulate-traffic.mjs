@@ -11,8 +11,13 @@ const URL = process.argv[3] ?? "http://localhost:5173/";
 const CLICK_PROB = { A: 0.7, B: 0.3 };
 
 // Chrome Canary を使用(Playwright の自動化用プロファイルで起動するので、
-// 普段の Canary のプロファイルや履歴には影響しない)
-const browser = await chromium.launch({ channel: "chrome-canary" });
+// 普段の Canary のプロファイルや履歴には影響しない)。
+// ヘッドレスだと UA が HeadlessChrome になり GA4 のボットフィルタに
+// 落とされるため、ヘッドあり(ウィンドウ表示)で起動する
+const browser = await chromium.launch({
+  channel: "chrome-canary",
+  headless: false,
+});
 const counts = { A: 0, B: 0, unknown: 0, clicks: { A: 0, B: 0 } };
 
 for (let i = 0; i < N; i++) {
