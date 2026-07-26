@@ -94,9 +94,12 @@ export default function App() {
         // gtag は head のインラインスクリプトで定義済みなので、ライブラリの
         // ロード前でも dataLayer にキューされて取りこぼしがない
         if (typeof window !== "undefined" && typeof window.gtag === "function") {
+          // variation_id は数値で送る。GrowthBook の GA4 テンプレートSQL が
+          // event_params の int_value を読むため、文字列で送ると NULL になり
+          // 露出データが分析クエリに乗らない
           window.gtag("event", "experiment_viewed", {
             experiment_id: experiment.key,
-            variation_id: result.key,
+            variation_id: result.variationId,
             gb_anon_id: String(attributes.id),
           });
         }
