@@ -89,7 +89,7 @@ export default function Home() {
       <h2>デバッグ情報</h2>
       <ul>
         <li>
-          匿名ID(cookie: gb_anon_id): <code>{rootData?.attributes.id}</code>
+          バケッティングID(= GA client ID / cookie: _ga): <code>{rootData?.attributes.id}</code>
         </li>
         <li>
           SDKペイロード: {rootData?.payload !== null ? "取得済み" : "未接続(フォールバック動作)"}
