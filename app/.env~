@@ -1,8 +1,0 @@
-# GrowthBook の SDK Connection で発行される Client Key
-# 例: GB_CLIENT_KEY=sdk-abc123
-GB_CLIENT_KEY=sdk-obDRRCcoKeBbQdk3
-
-# GrowthBook API のホスト
-# - Cloud 利用時: https://cdn.growthbook.io
-# - セルフホスト(docker compose)時: http://localhost:3100
-GB_API_HOST=https://cdn.growthbook.io
